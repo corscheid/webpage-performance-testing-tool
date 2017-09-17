@@ -31,8 +31,9 @@ File.foreach('urls.txt') do |test_url|
   driver.find_element(:id, 'url').send_keys test_url
   driver.find_element(:class, 'start_test').click
 
-  # store the URL of results page
+  # store the URLs of results page and XML API
   results_url = driver.current_url
+  xml_url = results_url.gsub('result', 'xmlResult')
 
   # wait for the results page to load and the load time to show
   begin
@@ -41,21 +42,12 @@ File.foreach('urls.txt') do |test_url|
     retry if element.nil?
   end
 
-  # bonus: use XML API
-  results_url.gsub!('result', 'xmlResult')
+  # now that the results page has loaded, the XML output exists; read and parse
+  xml = open(xml_url).read
+  doc = Crack::XML.parse(xml)['response']['data']['average']['firstView']
 
-  # nokogiri scrape 1st run load time value from results page
-  # doc = Nokogiri::HTML(open(results_url))
-  # bonus: use XML API / read the XML in
-  doc = Crack::XML.parse(open(results_url).read)['response']['data']['average']['firstView']
-  # load_time = doc.at_css('td#LoadTime').text
-  # bonus: use XML API / scrape the load time
+  # use XML API to scrape the load time and other data
   load_time = doc['loadTime']
-  # bonus: more data
-  # speed_index = doc.at_css('td#SpeedIndex').text
-  # t_doc_complete = doc.at_css('td#DocComplete').text
-  # t_fully_loaded = doc.at_css('td#FullyLoaded').text
-  # bonus: use XML API / grab the same stuff as before
   speed_index = doc['SpeedIndex']
   t_doc_complete = doc['docTime']
   t_fully_loaded = doc['fullyLoaded']
