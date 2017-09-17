@@ -72,6 +72,5 @@ email = gmail.compose do
   subject m_subject
   body message
 end
-# gmail.deliver(email)
-puts email
+gmail.deliver(email)
 gmail.logout
