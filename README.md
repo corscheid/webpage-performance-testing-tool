@@ -1,6 +1,6 @@
 # webpage-performance-testing-tool
 
-What this program *currently* does is open a Firefox window, and test the performance of Google.com and then email the results, all automatically using one command in a terminal.
+What this program *currently* does is open a Firefox window, load a list of URLS from a file, test the performance of each URL and then email the results according to the config file, all automatically using one command in a terminal.
 
 ## Usage
 
@@ -16,4 +16,6 @@ What this program *currently* does is open a Firefox window, and test the perfor
 
 `password`: your gmail/Gsuite password
 
-### More coming soon...
+## URLS file
+
+List URLs to be tested in a plain text file one url per line and each will be tested sequentially.
