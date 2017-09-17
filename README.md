@@ -10,6 +10,8 @@ What this program *currently* does is open a Firefox window, load a list of URLS
 
 `gmail` (`gem install gmail`)
 
+`crack` (`gem install crack`)
+
 ## Usage
 
 edit `config.yaml` and `urls.txt` to your liking
