@@ -16,6 +16,7 @@ message = %(Hey josh,
 
 Here are the URLs that I just tested along with relevant data:
 )
+results_body = ''
 
 # open a firefox browser
 driver = Selenium::WebDriver.for :firefox
@@ -46,24 +47,18 @@ File.foreach('urls.txt') do |test_url|
   speed_index = doc.at_css('td#SpeedIndex').text
   t_doc_complete = doc.at_css('td#DocComplete').text
   t_fully_loaded = doc.at_css('td#FullyLoaded').text
-  puts "[#{test_url.chomp}]"
-  puts "Result URL: #{results_url}"
-  puts "Load Time: #{load_time}"
-  puts "Speed Index: #{speed_index}"
-  puts "Doc Complete Time: #{t_doc_complete}"
-  puts "Fully Loaded Time: #{t_fully_loaded}"
-
-  # bonus: pretty email format
-  message += %(
+  results_body += %(
   [#{test_url.chomp}]
-  #{results_url}
-
-  Speed Index:       #{speed_index}
-  Load Time:         #{load_time}
+  Result URL: #{results_url}
+  Load Time: #{load_time}
+  Speed Index: #{speed_index}
   Doc Complete Time: #{t_doc_complete}
   Fully Loaded Time: #{t_fully_loaded}
   )
 end
+
+puts results_body
+message += results_body
 
 # connect to Gmail and send the message
 gmail = Gmail.connect(username, password)
