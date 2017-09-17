@@ -2,7 +2,17 @@
 
 What this program *currently* does is open a Firefox window, load a list of URLS from a file, test the performance of each URL and then email the results according to the config file, all automatically using one command in a terminal.
 
+## Dependencies
+
+`nokogiri` (`gem install nakogiri`)
+
+`selenium-webdriver` (`gem install selenium-webdriver`, also requires a webdriver binary for firefox: [download here]https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver])
+
+`gmail` (`gem install gmail`)
+
 ## Usage
+
+edit `config.yaml` and `urls.txt` to your liking
 
 `$ ruby test.rb`
 
