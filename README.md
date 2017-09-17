@@ -6,7 +6,7 @@ What this program *currently* does is open a Firefox window, load a list of URLS
 
 `nokogiri` (`gem install nakogiri`)
 
-`selenium-webdriver` (`gem install selenium-webdriver`, also requires a webdriver binary for firefox: [download here]https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver])
+`selenium-webdriver` (`gem install selenium-webdriver`, also requires a webdriver binary for firefox: https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver)
 
 `gmail` (`gem install gmail`)
 
