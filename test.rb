@@ -5,31 +5,6 @@ require 'yaml'
 require 'gmail'
 
 test_site = 'https://www.webpagetest.org'
-test_url = 'https://google.com'
-
-# open a firefox browser and navigate to page testing site
-driver = Selenium::WebDriver.for :firefox
-driver.navigate.to test_site
-
-# enter a URL and press the start test button
-driver.find_element(:id, 'url').send_keys test_url
-driver.find_element(:class, 'start_test').click
-
-# store the URL of results page
-results_url = driver.current_url
-puts results_url
-
-# wait for the results page to load and the load time to show
-begin
-  element = driver.find_element(:id, 'LoadTime')
-rescue
-  retry if element.nil?
-end
-
-# nokogiri scrape 1st run load time value from results page
-doc = Nokogiri::HTML(open(results_url))
-load_time = doc.at_css('td#LoadTime').text
-puts load_time
 
 # gather the stuff for the email
 config_file = YAML.load_file('config.yaml')
@@ -37,14 +12,58 @@ to_addr = config_file['to_addr']
 username = config_file['username']
 password = config_file['password']
 m_subject = 'Results of selenium page testing'
-message = <<-EOF
-  Hey josh,
-      Here's the URL that I just tested:
+message = %(Hey josh,
 
+Here are the URLs that I just tested along with relevant data:
+)
+
+# open a firefox browser
+driver = Selenium::WebDriver.for :firefox
+
+# bonus: more than 1 URL - open 3 URLs from a file
+File.foreach('urls.txt') do |test_url|
+  # navigate to page testing site
+  driver.navigate.to test_site
+
+  # enter a URL and press the start test button
+  driver.find_element(:id, 'url').send_keys test_url
+  driver.find_element(:class, 'start_test').click
+
+  # store the URL of results page
+  results_url = driver.current_url
+
+  # wait for the results page to load and the load time to show
+  begin
+    element = driver.find_element(:id, 'LoadTime')
+  rescue
+    retry if element.nil?
+  end
+
+  # nokogiri scrape 1st run load time value from results page
+  doc = Nokogiri::HTML(open(results_url))
+  load_time = doc.at_css('td#LoadTime').text
+  # bonus: more data
+  speed_index = doc.at_css('td#SpeedIndex').text
+  t_doc_complete = doc.at_css('td#DocComplete').text
+  t_fully_loaded = doc.at_css('td#FullyLoaded').text
+  puts "[#{test_url.chomp}]"
+  puts "Result URL: #{results_url}"
+  puts "Load Time: #{load_time}"
+  puts "Speed Index: #{speed_index}"
+  puts "Doc Complete Time: #{t_doc_complete}"
+  puts "Fully Loaded Time: #{t_fully_loaded}"
+
+  # bonus: pretty email format
+  message += %(
+  [#{test_url.chomp}]
   #{results_url}
 
-  And here is its LoadTime:   #{load_time}
-  EOF
+  Speed Index:       #{speed_index}
+  Load Time:         #{load_time}
+  Doc Complete Time: #{t_doc_complete}
+  Fully Loaded Time: #{t_fully_loaded}
+  )
+end
 
 # connect to Gmail and send the message
 gmail = Gmail.connect(username, password)
@@ -53,5 +72,6 @@ email = gmail.compose do
   subject m_subject
   body message
 end
-gmail.deliver(email)
+# gmail.deliver(email)
+puts email
 gmail.logout
