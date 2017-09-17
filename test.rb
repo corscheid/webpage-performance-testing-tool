@@ -3,6 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'yaml'
 require 'gmail'
+require 'crack/xml'
 
 test_site = 'https://www.webpagetest.org'
 
@@ -40,20 +41,32 @@ File.foreach('urls.txt') do |test_url|
     retry if element.nil?
   end
 
+  # bonus: use XML API
+  results_url.gsub!('result', 'xmlResult')
+
   # nokogiri scrape 1st run load time value from results page
-  doc = Nokogiri::HTML(open(results_url))
-  load_time = doc.at_css('td#LoadTime').text
+  # doc = Nokogiri::HTML(open(results_url))
+  # bonus: use XML API / read the XML in
+  doc = Crack::XML.parse(open(results_url).read)['response']['data']['average']['firstView']
+  # load_time = doc.at_css('td#LoadTime').text
+  # bonus: use XML API / scrape the load time
+  load_time = doc['loadTime']
   # bonus: more data
-  speed_index = doc.at_css('td#SpeedIndex').text
-  t_doc_complete = doc.at_css('td#DocComplete').text
-  t_fully_loaded = doc.at_css('td#FullyLoaded').text
+  # speed_index = doc.at_css('td#SpeedIndex').text
+  # t_doc_complete = doc.at_css('td#DocComplete').text
+  # t_fully_loaded = doc.at_css('td#FullyLoaded').text
+  # bonus: use XML API / grab the same stuff as before
+  speed_index = doc['SpeedIndex']
+  t_doc_complete = doc['docTime']
+  t_fully_loaded = doc['fullyLoaded']
+
   results_body += %(
   [#{test_url.chomp}]
-  Result URL: #{results_url}
-  Load Time: #{load_time}
-  Speed Index: #{speed_index}
-  Doc Complete Time: #{t_doc_complete}
-  Fully Loaded Time: #{t_fully_loaded}
+  Result URL:        #{results_url}
+  Speed Index:       #{speed_index}
+  Load Time:         #{load_time} ms
+  Doc Complete Time: #{t_doc_complete} ms
+  Fully Loaded Time: #{t_fully_loaded} ms
   )
 end
 
