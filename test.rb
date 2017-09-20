@@ -1,9 +1,20 @@
 require 'selenium-webdriver'
-require 'nokogiri'
 require 'open-uri'
 require 'yaml'
 require 'gmail'
 require 'crack/xml'
+
+# Provide a help page for cli arg -h and exit
+if ARGV.length == 1 && ARGV[0] == '-h'
+  puts <<-EOS
+  Usage:   ruby test.rb [location] [platforms]
+  Example: ruby test.rb "Singapore (10, Chrome, Firefox)" Firefox,Chrome
+  Args:
+    location:  location selection from the webpagetest.org site
+    platforms: comma separated list of platforms (browsers) to be tested on
+  EOS
+  exit 0
+end
 
 test_site = 'https://www.webpagetest.org'
 
@@ -19,16 +30,33 @@ Here are the URLs that I just tested along with relevant data:
 )
 results_body = ''
 
+# get location and platforms from config file if command line args are not set
+location = ARGV.length == 2 ? ARGV[0] : config_file['location']
+platforms = ARGV.length == 2 ? ARGV[1].split(',') : config_file['platforms']
+
 # open a firefox browser
 driver = Selenium::WebDriver.for :firefox
 
-# bonus: more than 1 URL - open 3 URLs from a file
+# more than 1 URL - use each url in urls.txt
 File.foreach('urls.txt') do |test_url|
   # navigate to page testing site
   driver.navigate.to test_site
 
-  # enter a URL and press the start test button
+  # enter a URL
   driver.find_element(:id, 'url').send_keys test_url
+
+  # select and click the location option in the dropdown
+  location_list = driver.find_element(:id, 'location')
+  l_options = location_list.find_elements(tag_name: 'option')
+  l_options.each { |option| option.click if option.text == location }
+
+  # select and click the test browser option in the dropdown
+  browser_list = driver.find_element(:id, 'browser')
+  b_options = browser_list.find_elements(tag_name: 'option')
+  # TODO: platforms[0] is a temporary stub; need to loop this
+  b_options.each { |option| option.click if option.text == platforms[0] }
+
+  # press the start button
   driver.find_element(:class, 'start_test').click
 
   # store the URLs of results page and XML API
