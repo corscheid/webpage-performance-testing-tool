@@ -1,3 +1,6 @@
 to_addr: 'recipient@example.com'
 username: 'author@example.com'
 password: 'yourgmailpassword'
+location: 'Los Angeles, CA USA (IE 7,8,9, Chrome)'
+platforms:
+  - Canary
