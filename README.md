@@ -4,8 +4,6 @@ What this program *currently* does is open a Firefox window, load a list of URLS
 
 ## Dependencies
 
-`nokogiri` (`gem install nakogiri`)
-
 `selenium-webdriver` (`gem install selenium-webdriver`, also requires a webdriver binary for firefox: https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver)
 
 `gmail` (`gem install gmail`)
@@ -18,6 +16,17 @@ edit `config.yaml` and `urls.txt` to your liking
 
 `$ ruby test.rb`
 
+### Command Line Arguments
+
+`location` : location selection from the webpagetest.org site
+
+`platforms` : comma separated list of platforms (browsers) to be tested on
+
+#### Examples:
+
+`# will test on Firefox and Chrome in Singapore`
+`$ ruby test.rb Singapore (10, Chrome, Firefox) Firefox,Chrome`
+
 ## Configuration file
 
 `config.yaml` contains relevant values used by the program. They are all fairly self-explanatory:
@@ -27,6 +36,10 @@ edit `config.yaml` and `urls.txt` to your liking
 `username`: your gmail username (your gmail address or Gsuite address)
 
 `password`: your gmail/Gsuite password
+
+`location`: the location selection from the webpagetest.org site.
+
+`platforms`: the list of platforms (browsers) to be tested on
 
 ## URLS file
 
