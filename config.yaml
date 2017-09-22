@@ -1,4 +1,7 @@
 to_addr: 'recipient@example.com'
+to_name: 'Name'
+greeting: 'Hi'
+intro: 'Here are the URLs that I just tested along with relevant data:'
 username: 'author@example.com'
 password: 'yourgmailpassword'
 location: 'Los Angeles, CA USA (IE 7,8,9, Chrome)'
