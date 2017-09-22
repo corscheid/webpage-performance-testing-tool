@@ -1,4 +1,5 @@
 to_addr: 'recipient@example.com'
+m_subject: 'Results of webpage testing'
 to_name: 'Name'
 greeting: 'Hi'
 intro: 'Here are the URLs that I just tested along with relevant data:'
