@@ -53,13 +53,13 @@ File.foreach('urls.txt') do |test_url|
   # select and click the location option in the dropdown
   location_list = driver.find_element(:id, 'location')
   l_options = location_list.find_elements(tag_name: 'option')
-  l_options.each { |option| option.click if option.text == location }
+  l_options.each { |option| option.click if option.text.start_with?(location) }
 
   # select and click the test browser option in the dropdown
   browser_list = driver.find_element(:id, 'browser')
   b_options = browser_list.find_elements(tag_name: 'option')
   # TODO: platforms[0] is a temporary stub; need to loop this
-  b_options.each { |option| option.click if option.text == platforms[0] }
+  b_options.each { |option| option.click if option.text.start_with?(platforms[0]) }
 
   # TODO: click :id 'advanced_settings', change :id 'number_of_tests'
 
@@ -82,23 +82,29 @@ File.foreach('urls.txt') do |test_url|
   doc = Crack::XML.parse(xml)['response']['data']['average']['firstView']
 
   # use XML API to scrape the load time and other data
-  # TODO: even more data
   load_time = doc['loadTime']
   speed_index = doc['SpeedIndex']
   t_doc_complete = doc['docTime']
   t_fully_loaded = doc['fullyLoaded']
+  t_first_byte = doc['TTFB']
+  t_visual_complete = doc['visualComplete']
+  t_last_interactive = doc['LastInteractive']
 
   results_body += %(
   [#{test_url.chomp}]
-  Result URL:        #{results_url}
-  Speed Index:       #{speed_index}
-  Load Time:         #{load_time} ms
-  Doc Complete Time: #{t_doc_complete} ms
-  Fully Loaded Time: #{t_fully_loaded} ms
+  Result URL:             #{results_url}
+  Speed Index:            #{speed_index}
+  Load Time:              #{load_time} ms
+  Doc Complete Time:      #{t_doc_complete} ms
+  Fully Loaded Time:      #{t_fully_loaded} ms
+  Time to First Byte:     #{t_first_byte} ms
+  Visual Complete Time:   #{t_visual_complete} ms
+  Last Interactive Time:  #{t_last_interactive} ms
   )
+
+  puts "[DONE] #{test_url}"
 end
 
-puts results_body
 message += results_body
 
 # connect to Gmail and send the message
