@@ -35,7 +35,7 @@ results_body = ''
 
 # get location and platforms from config file if command line args are not set
 location = ARGV.length == 2 ? ARGV[0] : config_file['location']
-platform = ARGV.length == 2 ? ARGV[1].split(',') : config_file['platform']
+platform = ARGV.length == 2 ? ARGV[1] : config_file['platform']
 
 puts "Using Location: #{location}, Test browser: #{platform}"
 
