@@ -1,6 +1,13 @@
 # webpage-performance-testing-tool
 
-What this program *currently* does is open a Firefox window, load a list of URLS from a file, test the performance of each URL and then email the results according to the config file, all automatically using one command in a terminal.
+What this program *currently* does is:
+* open a Firefox window
+* load a list of URLS from a file
+* test the performance of each URL
+* output performance results data in .csv format easily usable in MS Excel
+* email the results according to the configuration file
+
+all automatically using one command in a terminal.
 
 ## Dependencies
 
