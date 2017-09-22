@@ -17,9 +17,13 @@ if ARGV.length == 1 && ARGV[0] == '-h'
 end
 
 test_site = 'https://www.webpagetest.org'
+config_filename = 'config.yaml'
+url_filename = 'urls.txt'
+# for measuring progress
+url_line_count = `wc -l "#{url_filename}"`.strip.split(' ')[0].to_i
 
 # gather the stuff for the email
-config_file = YAML.load_file('config.yaml')
+config_file = YAML.load_file(config_filename)
 to_addr = config_file['to_addr']
 to_name = config_file['to_name']
 username = config_file['username']
@@ -37,15 +41,24 @@ results_body = ''
 location = ARGV.length == 2 ? ARGV[0] : config_file['location']
 platform = ARGV.length == 2 ? ARGV[1] : config_file['platform']
 
-puts "Using Location: #{location}, Test browser: #{platform}"
+puts "Using Location: #{location}, Using Test browser: #{platform}"
 
 # open a firefox browser
 driver = Selenium::WebDriver.for :firefox
 
+# track progress
+p_counter = 1
+
 # more than 1 URL - use each url in urls.txt
-File.foreach('urls.txt') do |test_url|
+File.foreach(url_filename) do |test_url|
+  print "(#{p_counter}/#{url_line_count}) #{test_url}".chomp
+
   # skip the line if it's a malformed URL TODO: gather these and report them
-  next if test_url !~ /^((http|https):\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
+  if test_url !~ /^((http|https):\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
+    puts ' [INVALID URL]'
+    p_counter += 1
+    next
+  end
 
   # navigate to page testing site
   driver.navigate.to test_site
@@ -56,12 +69,17 @@ File.foreach('urls.txt') do |test_url|
   # select and click the location option in the dropdown
   location_list = driver.find_element(:id, 'location')
   l_options = location_list.find_elements(tag_name: 'option')
-  l_options.each { |option| option.click if option.text.start_with?(location) }
+  l_options.each do |option|
+    option.click
+    break if option.text.start_with?(location)
+  end
 
   # select and click the test browser option in the dropdown
   browser_list = driver.find_element(:id, 'browser')
   b_options = browser_list.find_elements(tag_name: 'option')
-  b_options.each { |option| option.click if option.text.start_with?(platform) }
+  b_options.each do |option| option.click
+    break if option.text.start_with?(platform)
+  end
 
   # TODO: click :id 'advanced_settings', change :id 'number_of_tests'
 
@@ -104,7 +122,8 @@ File.foreach('urls.txt') do |test_url|
   Last Interactive Time:  #{t_last_interactive} ms
   )
 
-  puts "[DONE] #{test_url}"
+  p_counter += 1
+  puts " [DONE]"
 end
 
 message += results_body
