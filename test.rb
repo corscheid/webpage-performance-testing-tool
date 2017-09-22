@@ -35,7 +35,9 @@ results_body = ''
 
 # get location and platforms from config file if command line args are not set
 location = ARGV.length == 2 ? ARGV[0] : config_file['location']
-platforms = ARGV.length == 2 ? ARGV[1].split(',') : config_file['platforms']
+platform = ARGV.length == 2 ? ARGV[1].split(',') : config_file['platform']
+
+puts "Using Location: #{location}, Test browser: #{platform}"
 
 # open a firefox browser
 driver = Selenium::WebDriver.for :firefox
@@ -44,6 +46,7 @@ driver = Selenium::WebDriver.for :firefox
 File.foreach('urls.txt') do |test_url|
   # skip the line if it's a malformed URL TODO: gather these and report them
   next if test_url !~ /^((http|https):\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
+
   # navigate to page testing site
   driver.navigate.to test_site
 
@@ -58,8 +61,7 @@ File.foreach('urls.txt') do |test_url|
   # select and click the test browser option in the dropdown
   browser_list = driver.find_element(:id, 'browser')
   b_options = browser_list.find_elements(tag_name: 'option')
-  # TODO: platforms[0] is a temporary stub; need to loop this
-  b_options.each { |option| option.click if option.text.start_with?(platforms[0]) }
+  b_options.each { |option| option.click if option.text.start_with?(platform) }
 
   # TODO: click :id 'advanced_settings', change :id 'number_of_tests'
 

@@ -6,5 +6,4 @@ intro: 'Here are the URLs that I just tested along with relevant data:'
 username: 'author@example.com'
 password: 'yourgmailpassword'
 location: 'Los Angeles, CA USA (IE 7,8,9, Chrome)'
-platforms:
-  - Canary
+platform: 'Chrome'
