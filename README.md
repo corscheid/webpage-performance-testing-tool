@@ -4,7 +4,7 @@ What this program *currently* does is open a Firefox window, load a list of URLS
 
 ## Dependencies
 
-`selenium-webdriver` (`gem install selenium-webdriver`, also requires a webdriver binary for firefox: https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver)
+`selenium-webdriver` (`gem install selenium-webdriver`, also requires a [webdriver binary for firefox](https://developer.mozilla.org/en-US/docs/Mozilla/QA/Marionette/WebDriver))
 
 `gmail` (`gem install gmail`)
 
@@ -24,11 +24,15 @@ edit `config.yaml` and `urls.txt` to your liking
 
 #### Examples:
 
-`# will test with default values from config.yaml file`
-`$ ruby test.rb`
+```
+# will test with default values set in config.yaml file
+$ ruby test.rb
+```
 
-`# will test on Firefox in Denver, CO`
-`$ ruby test.rb Denver Firefox`
+```
+# will test in Denver, CO using Firefox
+$ ruby test.rb Denver Firefox
+```
 
 ## Configuration file
 
