@@ -21,12 +21,15 @@ test_site = 'https://www.webpagetest.org'
 # gather the stuff for the email
 config_file = YAML.load_file('config.yaml')
 to_addr = config_file['to_addr']
+to_name = config_file['to_name']
 username = config_file['username']
 password = config_file['password']
 m_subject = 'Results of selenium page testing'
-message = %(Hey josh,
+greeting = config_file['greeting']
+intro = config_file['intro']
+message = %(#{greeting} #{to_name},
 
-Here are the URLs that I just tested along with relevant data:
+#{intro}
 )
 results_body = ''
 
@@ -39,6 +42,8 @@ driver = Selenium::WebDriver.for :firefox
 
 # more than 1 URL - use each url in urls.txt
 File.foreach('urls.txt') do |test_url|
+  # skip the line if it's a malformed URL TODO: gather these and report them
+  next if test_url !~ /^((http|https):\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
   # navigate to page testing site
   driver.navigate.to test_site
 
@@ -55,6 +60,8 @@ File.foreach('urls.txt') do |test_url|
   b_options = browser_list.find_elements(tag_name: 'option')
   # TODO: platforms[0] is a temporary stub; need to loop this
   b_options.each { |option| option.click if option.text == platforms[0] }
+
+  # TODO: click :id 'advanced_settings', change :id 'number_of_tests'
 
   # press the start button
   driver.find_element(:class, 'start_test').click
@@ -75,6 +82,7 @@ File.foreach('urls.txt') do |test_url|
   doc = Crack::XML.parse(xml)['response']['data']['average']['firstView']
 
   # use XML API to scrape the load time and other data
+  # TODO: even more data
   load_time = doc['loadTime']
   speed_index = doc['SpeedIndex']
   t_doc_complete = doc['docTime']
