@@ -24,14 +24,25 @@ edit `config.yaml` and `urls.txt` to your liking
 
 #### Examples:
 
-`# will test on Firefox and Chrome in Singapore`
-`$ ruby test.rb Singapore (10, Chrome, Firefox) Firefox,Chrome`
+`# will test with default values from config.yaml file`
+`$ ruby test.rb`
+
+`# will test on Firefox in Denver, CO`
+`$ ruby test.rb Denver Firefox`
 
 ## Configuration file
 
 `config.yaml` contains relevant values used by the program. They are all fairly self-explanatory:
 
 `to_addr`: the email address to send the results to
+
+`m_subject`: subject line of the results email
+
+`to_name`: the name of the recipient, as desired in the beginning of the email (e.g., John, John Smith, Mr. Smith, etc.)
+
+`greeting`: the greeting of the email (e.g., Hi, Good morning, Hello, etc.)
+
+`intro`: the text of the email which precedes/introduces the actual test results
 
 `username`: your gmail username (your gmail address or Gsuite address)
 
