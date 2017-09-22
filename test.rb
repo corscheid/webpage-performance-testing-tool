@@ -19,10 +19,13 @@ end
 test_site = 'https://www.webpagetest.org'
 config_filename = 'config.yaml'
 url_filename = 'urls.txt'
-# for measuring progress
+t = Time.new
+csv_filename = "#{t.year}#{t.month}#{t.day}#{t.hour}#{t.min}#{t.sec}.csv"
+
+# for measuring progress: number of lines in url file
 url_line_count = `wc -l "#{url_filename}"`.strip.split(' ')[0].to_i
 
-# gather the stuff for the email
+# gather info for the email
 config_file = YAML.load_file(config_filename)
 to_addr = config_file['to_addr']
 to_name = config_file['to_name']
@@ -36,6 +39,13 @@ message = %(#{greeting} #{to_name},
 #{intro}
 )
 results_body = ''
+
+# prepare the Excel-compatible CSV file content
+File.open(csv_filename,'w') do |line|
+  line.puts 'Test URL,Results URL,Speed Index,Load Time,Doc Complete Time,' +
+  'Fully Loaded Time,Time to First Byte,Visual Complete Time'
+end
+csv_body = ''
 
 # get location and platforms from config file if command line args are not set
 location = ARGV.length == 2 ? ARGV[0] : config_file['location']
@@ -64,7 +74,9 @@ File.foreach(url_filename) do |test_url|
   driver.navigate.to test_site
 
   # enter a URL
-  driver.find_element(:id, 'url').send_keys test_url
+  url_field = driver.find_element(:id, 'url')
+  url_field.clear
+  url_field.send_keys test_url
 
   # select and click the location option in the dropdown
   location_list = driver.find_element(:id, 'location')
@@ -77,7 +89,8 @@ File.foreach(url_filename) do |test_url|
   # select and click the test browser option in the dropdown
   browser_list = driver.find_element(:id, 'browser')
   b_options = browser_list.find_elements(tag_name: 'option')
-  b_options.each do |option| option.click
+  b_options.each do |option|
+    option.click
     break if option.text.start_with?(platform)
   end
 
@@ -108,8 +121,8 @@ File.foreach(url_filename) do |test_url|
   t_fully_loaded = doc['fullyLoaded']
   t_first_byte = doc['TTFB']
   t_visual_complete = doc['visualComplete']
-  t_last_interactive = doc['LastInteractive']
 
+  # build the email
   results_body += %(
   [#{test_url.chomp}]
   Result URL:             #{results_url}
@@ -119,8 +132,14 @@ File.foreach(url_filename) do |test_url|
   Fully Loaded Time:      #{t_fully_loaded} ms
   Time to First Byte:     #{t_first_byte} ms
   Visual Complete Time:   #{t_visual_complete} ms
-  Last Interactive Time:  #{t_last_interactive} ms
   )
+
+  # build the csv file
+  File.open(csv_filename, 'a') do |line|
+    line.puts "#{test_url.chomp},#{results_url},#{speed_index},#{load_time} ms," +
+    "#{t_doc_complete} ms,#{t_fully_loaded} ms,#{t_first_byte} ms," +
+    "#{t_visual_complete} ms"
+  end
 
   p_counter += 1
   puts " [DONE]"
@@ -137,3 +156,4 @@ email = gmail.compose do
 end
 gmail.deliver(email)
 gmail.logout
+driver.quit
