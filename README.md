@@ -21,7 +21,7 @@ all automatically using one command in a terminal.
 
 edit `config.yaml` and `urls.txt` to your liking
 
-`$ ruby test.rb`
+```$ ruby test.rb```
 
 ### Command Line Arguments
 
