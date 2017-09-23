@@ -31,19 +31,21 @@ edit `config.yaml` and `urls.txt` to your liking
 
 #### Examples:
 
+Test with default values set in config.yaml file
+
 ```
-# will test with default values set in config.yaml file
 $ ruby test.rb
 ```
 
+Test in Denver, CO using Firefox
+
 ```
-# will test in Denver, CO using Firefox
 $ ruby test.rb Denver Firefox
 ```
 
 ## Configuration file
 
-`config.yaml` contains relevant values used by the program. They are all fairly self-explanatory:
+The file `config.yaml` contains relevant values used by the program. They are all fairly self-explanatory:
 
 `to_addr`: the email address to send the results to
 
@@ -61,8 +63,8 @@ $ ruby test.rb Denver Firefox
 
 `location`: the location selection from the webpagetest.org site.
 
-`platforms`: the list of platforms (browsers) to be tested on
+`platform`: the platform (browser) to be tested on
 
-## URLS file
+## URLs file
 
 List URLs to be tested in a plain text file one url per line and each will be tested sequentially.
