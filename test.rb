@@ -28,6 +28,7 @@ url_line_count = `wc -l "#{url_filename}"`.strip.split(' ')[0].to_i
 # gather info for the email
 config_file = YAML.load_file(config_filename)
 to_addr = config_file['to_addr']
+cc_addr = config_file['cc_addr']
 to_name = config_file['to_name']
 username = config_file['username']
 password = config_file['password']
@@ -151,6 +152,7 @@ message += results_body
 gmail = Gmail.connect(username, password)
 email = gmail.compose do
   to to_addr
+  cc cc_addr
   subject m_subject
   body message
 end

@@ -1,4 +1,5 @@
 to_addr: 'recipient@example.com'
+cc_addr: 'ccrecipient@example.com'
 m_subject: 'Results of webpage testing'
 to_name: 'Name'
 greeting: 'Hi'
