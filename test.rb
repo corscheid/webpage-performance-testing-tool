@@ -7,11 +7,11 @@ require 'crack/xml'
 # Provide a help page for cli arg -h and exit
 if ARGV.length == 1 && ARGV[0] == '-h'
   puts <<-EOS
-  Usage:   ruby test.rb [location] [platforms]
-  Example: ruby test.rb "Singapore (10, Chrome, Firefox)" Firefox,Chrome
+  Usage:   ruby test.rb [location] [platform]
+  Example: ruby test.rb Singapore Firefox
   Args:
     location:  location selection from the webpagetest.org site
-    platforms: comma separated list of platforms (browsers) to be tested on
+    platform: platform (browser) to be tested on
   EOS
   exit 0
 end
