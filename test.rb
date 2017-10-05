@@ -6,13 +6,13 @@ require 'crack/xml'
 
 # Provide a help page for cli arg -h and exit
 if ARGV.length == 1 && ARGV[0] == '-h'
-  puts <<-EOS
+  puts <<-USAGETEXT
   Usage:   ruby test.rb [location] [platform]
   Example: ruby test.rb Singapore Firefox
   Args:
     location:  location selection from the webpagetest.org site
     platform: platform (browser) to be tested on
-  EOS
+  USAGETEXT
   exit 0
 end
 
@@ -42,11 +42,10 @@ message = %(#{greeting} #{to_name},
 results_body = ''
 
 # prepare the Excel-compatible CSV file content
-File.open(csv_filename,'w') do |line|
-  line.puts 'Test URL,Results URL,Speed Index,Load Time,Doc Complete Time,' +
-  'Fully Loaded Time,Time to First Byte,Visual Complete Time'
+File.open(csv_filename, 'w') do |line|
+  line.puts 'Test URL,Results URL,Speed Index,Load Time,Doc Complete Time,' \
+            'Fully Loaded Time,Time to First Byte,Visual Complete Time'
 end
-csv_body = ''
 
 # get location and platforms from config file if command line args are not set
 location = ARGV.length == 2 ? ARGV[0] : config_file['location']
@@ -137,13 +136,13 @@ File.foreach(url_filename) do |test_url|
 
   # build the csv file
   File.open(csv_filename, 'a') do |line|
-    line.puts "#{test_url.chomp},#{results_url},#{speed_index},#{load_time} ms," +
-    "#{t_doc_complete} ms,#{t_fully_loaded} ms,#{t_first_byte} ms," +
-    "#{t_visual_complete} ms"
+    line.puts "#{test_url.chomp},#{results_url},#{speed_index},#{load_time} ms," \
+              "#{t_doc_complete} ms,#{t_fully_loaded} ms,#{t_first_byte} ms," \
+              "#{t_visual_complete} ms"
   end
 
   p_counter += 1
-  puts " [DONE]"
+  puts ' [DONE]'
 end
 
 message += results_body
